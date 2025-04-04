@@ -18,8 +18,8 @@ namespace UnityEngine.XR.Content.Interaction
 
         [SerializeField]
         [Tooltip("The value of the slider")]
-        [Range(0.0f, 1.0f)]
-        float m_Value = 0.5f;
+        [Range(-1.0f, 1.0f)]
+        float m_Value = 0.0f;
 
         [SerializeField]
         [Tooltip("The offset of the slider at value '1'")]
