@@ -9,11 +9,14 @@ public class CraneManager : MonoBehaviour
     [SerializeField] protected XRSlider _slider;
     [SerializeField] protected float _craneMovementSpeed;
     [SerializeField] protected Rigidbody _rb;
+    protected Animator _animator;
     protected Vector3 _input;
     Vector3 _direction;
+    bool _buttonPressed;
 
     void Start(){
         _rb = GetComponent<Rigidbody>();
+        _animator = GetComponent<Animator>();
     }
 
     private void OnEnable(){
@@ -28,10 +31,27 @@ public class CraneManager : MonoBehaviour
         _slider.onValueChange.RemoveListener(UpdateY);
     }
 
+    public void ModifyButtonInfo()
+    {
+        if (!_buttonPressed)
+        {
+            _animator.SetTrigger("Grab");
+        }
+        else
+        {
+            _animator.SetTrigger("Release");
+        }
+        _buttonPressed = !_buttonPressed;
+    }
+
     private void FixedUpdate(){
+        if (Mathf.Abs(_input.y) == 1){
+            _direction = new Vector3(_input.x, _input.y, _input.z);
+        }
+        else{
+            _direction = new Vector3(_input.x, 0.0f, _input.z);
+        }
 
-
-        _direction = new Vector3(_input.x, _input.y, _input.z);
         _rb.MovePosition(_rb.position + _direction.normalized * 
             _craneMovementSpeed * Time.fixedDeltaTime);
     }
@@ -40,8 +60,7 @@ public class CraneManager : MonoBehaviour
         _input.x = p_xMovement;
     }
 
-    protected void UpdateY(float p_yMovement)
-    {
+    protected void UpdateY(float p_yMovement){
         _input.y = p_yMovement;
     }
 

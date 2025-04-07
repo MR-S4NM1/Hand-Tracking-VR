@@ -7,8 +7,7 @@ namespace UnityEngine.XR.Content.Interaction
     /// <summary>
     /// An interactable that follows the position of the interactor on a single axis
     /// </summary>
-    public class XRSlider : XRBaseInteractable
-    {
+    public class XRSlider : XRBaseInteractable {
         [Serializable]
         public class ValueChangeEvent : UnityEvent<float> { }
 
@@ -26,7 +25,7 @@ namespace UnityEngine.XR.Content.Interaction
         float m_MaxPosition = 0.5f;
 
         [SerializeField]
-        [Tooltip("The offset of the slider at value '0'")]
+        [Tooltip("The offset of the slider at value '-1'")]
         float m_MinPosition = -0.5f;
 
         [SerializeField]
@@ -38,11 +37,9 @@ namespace UnityEngine.XR.Content.Interaction
         /// <summary>
         /// The value of the slider
         /// </summary>
-        public float value
-        {
+        public float value {
             get => m_Value;
-            set
-            {
+            set {
                 SetValue(value);
                 SetSliderPosition(value);
             }
@@ -53,77 +50,66 @@ namespace UnityEngine.XR.Content.Interaction
         /// </summary>
         public ValueChangeEvent onValueChange => m_OnValueChange;
 
-        void Start()
-        {
+        void Start() {
             SetValue(m_Value);
             SetSliderPosition(m_Value);
         }
 
-        protected override void OnEnable()
-        {
+        protected override void OnEnable() {
             base.OnEnable();
             selectEntered.AddListener(StartGrab);
             selectExited.AddListener(EndGrab);
         }
 
-        protected override void OnDisable()
-        {
+        protected override void OnDisable() {
             selectEntered.RemoveListener(StartGrab);
             selectExited.RemoveListener(EndGrab);
             base.OnDisable();
         }
 
-        void StartGrab(SelectEnterEventArgs args)
-        {
+        void StartGrab(SelectEnterEventArgs args) {
             m_Interactor = args.interactorObject;
             UpdateSliderPosition();
         }
 
-        void EndGrab(SelectExitEventArgs args)
-        {
+        void EndGrab(SelectExitEventArgs args) {
             m_Interactor = null;
         }
 
-        public override void ProcessInteractable(XRInteractionUpdateOrder.UpdatePhase updatePhase)
-        {
+        public override void ProcessInteractable(XRInteractionUpdateOrder.UpdatePhase updatePhase) {
             base.ProcessInteractable(updatePhase);
 
-            if (updatePhase == XRInteractionUpdateOrder.UpdatePhase.Dynamic)
-            {
-                if (isSelected)
-                {
+            if (updatePhase == XRInteractionUpdateOrder.UpdatePhase.Dynamic) {
+                if (isSelected) {
                     UpdateSliderPosition();
                 }
             }
         }
 
-        void UpdateSliderPosition()
-        {
-            // Put anchor position into slider space
+        void UpdateSliderPosition() {
             var localPosition = transform.InverseTransformPoint(m_Interactor.GetAttachTransform(this).position);
-            var sliderValue = Mathf.Clamp01((localPosition.z - m_MinPosition) / (m_MaxPosition - m_MinPosition));
+            float midpoint = (m_MaxPosition + m_MinPosition) * 0.5f;
+            float range = (m_MaxPosition - m_MinPosition) * 0.5f;
+            var sliderValue = Mathf.Clamp((localPosition.z - midpoint) / range, -1f, 1f);
             SetValue(sliderValue);
             SetSliderPosition(sliderValue);
         }
 
-        void SetSliderPosition(float value)
-        {
+        void SetSliderPosition(float value) {
             if (m_Handle == null)
                 return;
 
             var handlePos = m_Handle.localPosition;
-            handlePos.z = Mathf.Lerp(m_MinPosition, m_MaxPosition, value);
+            handlePos.z = Mathf.Lerp(m_MinPosition, m_MaxPosition, (value + 1f) / 2f);
             m_Handle.localPosition = handlePos;
         }
 
-        void SetValue(float value)
-        {
+        void SetValue(float value) {
             m_Value = value;
             m_OnValueChange.Invoke(m_Value);
         }
 
-        void OnDrawGizmosSelected()
-        {
+        void OnDrawGizmosSelected() {
             var sliderMinPoint = transform.TransformPoint(new Vector3(0.0f, 0.0f, m_MinPosition));
             var sliderMaxPoint = transform.TransformPoint(new Vector3(0.0f, 0.0f, m_MaxPosition));
 
@@ -131,8 +117,7 @@ namespace UnityEngine.XR.Content.Interaction
             Gizmos.DrawLine(sliderMinPoint, sliderMaxPoint);
         }
 
-        void OnValidate()
-        {
+        void OnValidate() {
             SetSliderPosition(m_Value);
         }
     }
