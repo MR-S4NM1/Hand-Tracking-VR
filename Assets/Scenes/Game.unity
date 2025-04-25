@@ -1239,7 +1239,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _craneManager: {fileID: 485131390}
-  _transform: {fileID: 117599634}
 --- !u!1 &147652530
 GameObject:
   m_ObjectHideFlags: 0
@@ -3639,7 +3638,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6598815579406187037, guid: 18ddb545287c546e19cc77dc9fbb2189, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 18ddb545287c546e19cc77dc9fbb2189, type: 3}
@@ -7723,7 +7722,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _craneManager: {fileID: 978966308}
-  _transform: {fileID: 1076797686}
 --- !u!23 &1076797689
 MeshRenderer:
   m_ObjectHideFlags: 0
