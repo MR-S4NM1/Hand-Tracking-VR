@@ -10,7 +10,7 @@ public class GrabObj : MonoBehaviour
     {
         if (other.CompareTag("Object"))
         {
-            if (_craneManager.GetGrabObject)
+            if (_craneManager.GetGrabObject && !other.GetComponent<ObjectCode>()._isGrabbed)
             {
                 other.transform.SetParent(transform, true);
                 other.transform.position = transform.position;
@@ -20,7 +20,7 @@ public class GrabObj : MonoBehaviour
             }
             else
             {
-                other.transform.SetParent(null);
+                other.transform.SetParent(null, true);
                 other.GetComponent<Rigidbody>().isKinematic = false;
                 other.GetComponent<Rigidbody>().useGravity = true;
                 other.GetComponent<ObjectCode>()._isGrabbed = false;

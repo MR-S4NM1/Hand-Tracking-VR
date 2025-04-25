@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,6 +9,10 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     [SerializeField] protected Material _material;
     [SerializeField] protected GameObject _finalPanel;
+    [SerializeField] protected GameObject _gamePanel;
+    [SerializeField] protected TextMeshProUGUI _scoreText;
+    [SerializeField] protected TextMeshProUGUI _timerText;
+    [SerializeField] protected TextMeshProUGUI _finalText;
     #endregion
 
     #region Knobs
@@ -16,7 +21,7 @@ public class GameManager : MonoBehaviour
 
     #region RuntimeVariables
     Coroutine _timerCoroutine;
-    int _score;
+    [SerializeField] int _score;
     #endregion
 
     #region UnityMethods
@@ -25,23 +30,25 @@ public class GameManager : MonoBehaviour
         if (instance == null) instance = this;
         _timerCoroutine = StartCoroutine(TimerCoroutine());
         _finalPanel.SetActive(false);
+        _gamePanel.SetActive(false);
+        _scoreText.text = "Score: " + _score.ToString("0");
         _score = 0;
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void AddScore(bool isChromeType)
     {
-        if (other.gameObject.layer == LayerMask.GetMask("Wood"))
+        switch (isChromeType)
         {
-            switch (other.gameObject.GetComponent<ObjectCode>()._isChrome)
-            {
-                case true:
-                    _score += 2;
-                    break;
-                case false:
-                    _score++;
-                    break;
-            }
-            other.gameObject.SetActive(false);
+            case true:
+                _score += 2;
+                _scoreText.text = "Score: " + _score;
+                //print(_score);
+                break;
+            case false:
+                _score++;
+                _scoreText.text = "Score: " + _score;
+                //print(_score);
+                break;
         }
     }
     #endregion
@@ -54,21 +61,28 @@ public class GameManager : MonoBehaviour
 
     protected void ActivateFinalCanvas()
     {
+        _gamePanel.SetActive(false);
         _finalPanel.SetActive(true);
+        _finalText.text = $"Your score was: + {_score}";
     }
 
     protected IEnumerator TimerCoroutine()
     {
         yield return new WaitForSeconds(3.0f);
+        _gamePanel.SetActive(true);
+        _timerText.text = "Time left: " + _timeBeforeFinishing.ToString("0");
+        _scoreText.text = "Score: " + _score;
 
-        while(_timeBeforeFinishing >= 0)
+        while (_timeBeforeFinishing >= 0)
         {
             yield return new WaitForSeconds(1.0f);
             _timeBeforeFinishing--;
+            _timerText.text = "Time left: " + _timeBeforeFinishing.ToString("0");
         }
 
         if(_timeBeforeFinishing <= 0.0f)
         {
+            _timeBeforeFinishing = 0.0f;
             ActivateFinalCanvas();
         }
     }

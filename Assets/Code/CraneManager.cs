@@ -15,8 +15,6 @@ public class CraneManager : MonoBehaviour
     [SerializeField] public CraneType craneType;
     [SerializeField] protected XRJoystick _joystick;
     [SerializeField] protected XRSlider _slider;
-    [SerializeField] protected XRGripButton _gripButtonA;
-    [SerializeField] protected XRGripButton _gripButonB;
     [SerializeField] protected float _craneMovementSpeed;
     [SerializeField] protected Rigidbody _rb;
     protected Animator _animator;
@@ -107,6 +105,21 @@ public class CraneManager : MonoBehaviour
                 #endregion
                 break;
             case CraneType.HORIZONTAL:
+                _direction = new Vector3(_input.x, 0.0f, 0.0f);
+
+                _rb.MovePosition(_rb.position + _direction.normalized *
+                    _craneMovementSpeed * Time.fixedDeltaTime);
+
+                #region BorderLimits
+                if (_rb.position.x <= 7.5f)
+                {
+                    _rb.position = new Vector3(7.55f, _rb.position.y, _rb.position.z);
+                }
+                else if (_rb.position.x >= 12.25f)
+                {
+                    _rb.position = new Vector3(12.0f, _rb.position.y, _rb.position.z);
+                }
+                #endregion
                 break;
         }
     }

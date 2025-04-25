@@ -144,3 +144,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isGrabbed: 0
+  _isChrome: 0
+  _rb: {fileID: 8561236115296414760}
+  _capsuleColliders:
+  - {fileID: 8561236115296414763}
+  - {fileID: 8561236115296414764}
