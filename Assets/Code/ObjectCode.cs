@@ -14,10 +14,11 @@ public class ObjectCode : MonoBehaviour
         _isChrome = false;
     }
 
-    private void OnTriggerExit(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Container"))
         {
+            gameObject.transform.SetParent(null, true);
             _isGrabbed = false;
             foreach (CapsuleCollider collision in _capsuleColliders) { collision.enabled = false; }
             GameManager.instance.AddScore(_isChrome);

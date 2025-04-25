@@ -63,7 +63,7 @@ public class GameManager : MonoBehaviour
     {
         _gamePanel.SetActive(false);
         _finalPanel.SetActive(true);
-        _finalText.text = $"Your score was: + {_score}";
+        _finalText.text = $"Your score was: {_score}";
     }
 
     protected IEnumerator TimerCoroutine()

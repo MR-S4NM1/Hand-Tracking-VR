@@ -12,19 +12,23 @@ public class GrabObj : MonoBehaviour
         {
             if (_craneManager.GetGrabObject && !other.GetComponent<ObjectCode>()._isGrabbed)
             {
-                other.transform.SetParent(transform, true);
-                other.transform.position = transform.position;
-                other.GetComponent<Rigidbody>().isKinematic = true;
-                other.GetComponent<Rigidbody>().useGravity = false;
-                other.GetComponent<ObjectCode>()._isGrabbed = true;
+                if(other.transform.parent == null)
+                {
+                    other.transform.SetParent(this.gameObject.transform);
+                    other.transform.position = transform.position;
+                    other.GetComponent<Rigidbody>().isKinematic = true;
+                    other.GetComponent<Rigidbody>().useGravity = false;
+                    other.GetComponent<ObjectCode>()._isGrabbed = true;
+                }
             }
             else
             {
-                other.transform.SetParent(null, true);
+                other.transform.SetParent(null);
                 other.GetComponent<Rigidbody>().isKinematic = false;
                 other.GetComponent<Rigidbody>().useGravity = true;
                 other.GetComponent<ObjectCode>()._isGrabbed = false;
             }
+            
         }
     }
 }
