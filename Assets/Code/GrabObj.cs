@@ -8,23 +8,22 @@ public class GrabObj : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (_craneManager.GetGrabObject)
+        if (other.CompareTag("Object"))
         {
-            if (other.CompareTag("Object"))
+            if (_craneManager.GetGrabObject)
             {
                 other.transform.SetParent(transform, true);
                 other.transform.position = transform.position;
                 other.GetComponent<Rigidbody>().isKinematic = true;
                 other.GetComponent<Rigidbody>().useGravity = false;
+                other.GetComponent<ObjectCode>()._isGrabbed = true;
             }
-        }
-        else
-        {
-            if (other.CompareTag("Object"))
+            else
             {
                 other.transform.SetParent(null);
                 other.GetComponent<Rigidbody>().isKinematic = false;
                 other.GetComponent<Rigidbody>().useGravity = true;
+                other.GetComponent<ObjectCode>()._isGrabbed = false;
             }
         }
     }

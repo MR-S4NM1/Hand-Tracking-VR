@@ -5,6 +5,7 @@ using UnityEngine.XR.Interaction;
 
 public enum States
 {
+    NONE,
     NOT_SHOOTING,
     SHOOTING
 }
@@ -28,6 +29,7 @@ public class LaserCode : MonoBehaviour
     [SerializeField] protected States _previousState;
     [SerializeField] protected Vector3 _laserDirection;
     RaycastHit _raycastHit;
+    Coroutine _coroutine;
     #endregion
     protected void Start()
     {
@@ -37,7 +39,7 @@ public class LaserCode : MonoBehaviour
 
     protected void ChangeState(States p_state)
     {
-        _previousState = p_state;
+        _previousState = _state;
 
         if(p_state != _previousState)
         {
@@ -53,27 +55,36 @@ public class LaserCode : MonoBehaviour
         }
     }
 
-    public void ShootLaser()
+    public void StartShootingLaser()
+    {
+        ChangeState(States.SHOOTING);
+    }
+
+    protected void ShootLaser()
     {
         _state = States.SHOOTING;
-
-        _laser.SetPosition(0, _laserOrigin.position);
-
-        if (Physics.Raycast(_laserOrigin.position, _laserDirection, 
-            out _raycastHit, LayerMask.GetMask("Wood"))){
-            _laser.SetPosition(1, _raycastHit.point);
-            //TODO: Make that the Game Manager changes the hitObjectsMaterial
-        }
-        else
-        {
-            _laser.SetPosition(1, _laserOrigin.position + 
-                (_laserDirection * _laserDistanceRange));
-        }
-
+        _coroutine = StartCoroutine(ShootingCoolDown());
     }
 
     protected IEnumerator ShootingCoolDown()
     {
-        yield return null;
+        _laser.SetPosition(0, _laserOrigin.position);
+
+        if (Physics.Raycast(_laserOrigin.position, _laserDirection,
+            out _raycastHit, LayerMask.GetMask("Wood")))
+        {
+            _laser.SetPosition(1, _raycastHit.point);
+            //TODO: Make that the Game Manager changes the hitObjectsMaterial
+            GameManager.instance.ChangeMaterial(_raycastHit.collider.gameObject);
+        }
+        else
+        {
+            _laser.SetPosition(1, _laserOrigin.position +
+                (_laserDirection * _laserDistanceRange));
+        }
+        _laser.enabled = true;
+        yield return new WaitForSeconds(_laserDuration);
+        _laser.enabled = false;
+        ChangeState(States.NOT_SHOOTING);
     }
 }

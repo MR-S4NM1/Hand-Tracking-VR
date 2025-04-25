@@ -3,8 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Content.Interaction;
 
+public enum CraneType
+{
+    NONE,
+    ABOVE,
+    HORIZONTAL
+}
+
 public class CraneManager : MonoBehaviour
 {
+    [SerializeField] public CraneType craneType;
     [SerializeField] protected XRJoystick _joystick;
     [SerializeField] protected XRSlider _slider;
     [SerializeField] protected XRGripButton _gripButtonA;
@@ -59,38 +67,47 @@ public class CraneManager : MonoBehaviour
     }
 
     private void FixedUpdate(){
-        _direction = new Vector3(_input.x, _input.y, _input.z);
+        switch (craneType)
+        {
+            case CraneType.ABOVE:
+                _direction = new Vector3(_input.x, _input.y, _input.z);
 
-        _rb.MovePosition(_rb.position + _direction.normalized * 
-            _craneMovementSpeed * Time.fixedDeltaTime);
+                _rb.MovePosition(_rb.position + _direction.normalized *
+                    _craneMovementSpeed * Time.fixedDeltaTime);
 
-        if(_rb.position.y <= 2.5f)
-        {
-            _rb.position = new Vector3(_rb.position.x, 2.55f, _rb.position.z);
-            _yButtonPressed = true;
-            UpdateY(0.0f);
-        }
-        else if(_rb.position.y >= 5.5f)
-        {
-            _rb.position = new Vector3(_rb.position.x, 5.45f, _rb.position.z);
-            _yButtonPressed = false;
-            UpdateY(0.0f);
-        }
-        else if(_rb.position.z <= 3.0f)
-        {
-            _rb.position = new Vector3(_rb.position.x, _rb.position.y, 3.05f);
-        }
-        else if (_rb.position.z >= 10.0f)
-        {
-            _rb.position = new Vector3(_rb.position.x, _rb.position.y, 9.95f);
-        }
-        else if (_rb.position.x <= 7.0f)
-        {
-            _rb.position = new Vector3(7.05f, _rb.position.y, _rb.position.z);
-        }
-        else if (_rb.position.x >= 13.0f)
-        {
-            _rb.position = new Vector3(12.95f, _rb.position.y, _rb.position.z);
+                #region BorderLimits
+                if (_rb.position.y <= 2.5f)
+                {
+                    _rb.position = new Vector3(_rb.position.x, 2.55f, _rb.position.z);
+                    _yButtonPressed = true;
+                    UpdateY(0.0f);
+                }
+                else if (_rb.position.y >= 5.5f)
+                {
+                    _rb.position = new Vector3(_rb.position.x, 5.45f, _rb.position.z);
+                    _yButtonPressed = false;
+                    UpdateY(0.0f);
+                }
+                else if (_rb.position.z <= 3.0f)
+                {
+                    _rb.position = new Vector3(_rb.position.x, _rb.position.y, 3.05f);
+                }
+                else if (_rb.position.z >= 10.0f)
+                {
+                    _rb.position = new Vector3(_rb.position.x, _rb.position.y, 9.95f);
+                }
+                else if (_rb.position.x <= 7.0f)
+                {
+                    _rb.position = new Vector3(7.05f, _rb.position.y, _rb.position.z);
+                }
+                else if (_rb.position.x >= 13.0f)
+                {
+                    _rb.position = new Vector3(12.95f, _rb.position.y, _rb.position.z);
+                }
+                #endregion
+                break;
+            case CraneType.HORIZONTAL:
+                break;
         }
     }
 
